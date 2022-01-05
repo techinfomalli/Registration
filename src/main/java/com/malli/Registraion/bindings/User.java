@@ -24,6 +24,7 @@ public class User {
 	String userAccStatus ;
 	LocalDate createdDate ;
 	LocalDate updatedDate ;
+	
 
 
 }

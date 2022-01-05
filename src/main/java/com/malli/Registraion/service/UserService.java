@@ -1,192 +1,71 @@
 package com.malli.Registraion.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Function;
+import java.util.Random;
 
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.repository.query.FluentQuery.FetchableFluentQuery;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import com.malli.Registraion.bindings.User;
 import com.malli.Registraion.models.UserEntity;
 import com.malli.Registraion.repositories.UserRepository;
+import com.malli.Registraion.utils.EmailUtils;
 
-public class UserService implements UserRepository {
+@Service
+public class UserService {
 
-	@Override
-	public List<UserEntity> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Autowired
+	UserRepository userRepo;
 
-	@Override
-	public List<UserEntity> findAll(Sort sort) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	@Autowired
+	EmailUtils emaiUtils;
+	
+	public List<User> findAllUsers() {
 
-	@Override
-	public List<UserEntity> findAllById(Iterable<Integer> ids) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		List<User> users = new ArrayList();
+		List<UserEntity> usreEntity = userRepo.findAll();
+		for (UserEntity entity : usreEntity) {
+			User user = new User();
+			BeanUtils.copyProperties(entity, user);
+			users.add(user);
+		}
 
-	@Override
-	public <S extends UserEntity> List<S> saveAll(Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void flush() {
-		// TODO Auto-generated method stub
+		return users;
 
 	}
 
-	@Override
-	public <S extends UserEntity> S saveAndFlush(S entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> List<S> saveAllAndFlush(Iterable<S> entities) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void deleteAllInBatch(Iterable<UserEntity> entities) {
-		// TODO Auto-generated method stub
+	public String deleteUser(Integer userId) {
+		userRepo.deleteById(userId);
+		return "Deleted successfully.";
 
 	}
 
-	@Override
-	public void deleteAllByIdInBatch(Iterable<Integer> ids) {
-		// TODO Auto-generated method stub
+	public String createUser(User user) {
+		UserEntity entity = new UserEntity();
+		BeanUtils.copyProperties(user, entity);
+		entity.setUserPwd(generateTempPwd());
+		UserEntity userEntity=userRepo.save(entity);
+		if(userEntity.getUserId()!=null) {
+			emaiUtils.sendEmail("Subject","body",userEntity.getUserEmail());
+		}
+
+		return "User created successfully.";
 
 	}
 
-	@Override
-	public void deleteAllInBatch() {
-		// TODO Auto-generated method stub
+	private String generateTempPwd() {
+		String tempPwd = null;
+		int leftLimit = 48; // numeral '0'
+		int rightLimit = 122; // letter 'z'
+		int targetStringLength = 6;
+		Random random = new Random();
 
+		tempPwd = random.ints(leftLimit, rightLimit + 1).filter(i -> (i <= 57 || i >= 65) && (i <= 90 || i >= 97))
+				.limit(targetStringLength)
+				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append).toString();
+
+		return tempPwd;
 	}
-
-	@Override
-	public UserEntity getOne(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public UserEntity getById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> List<S> findAll(Example<S> example) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> List<S> findAll(Example<S> example, Sort sort) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Page<UserEntity> findAll(Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> S save(S entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Optional<UserEntity> findById(Integer id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean existsById(Integer id) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public long count() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void deleteById(Integer id) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void delete(UserEntity entity) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAllById(Iterable<? extends Integer> ids) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAll(Iterable<? extends UserEntity> entities) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void deleteAll() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public <S extends UserEntity> Optional<S> findOne(Example<S> example) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> Page<S> findAll(Example<S> example, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <S extends UserEntity> long count(Example<S> example) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public <S extends UserEntity> boolean exists(Example<S> example) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public <S extends UserEntity, R> R findBy(Example<S> example, Function<FetchableFluentQuery<S>, R> queryFunction) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

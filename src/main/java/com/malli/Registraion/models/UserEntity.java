@@ -51,4 +51,5 @@ public class UserEntity {
 	@CreationTimestamp
 	@Column(name="UPDATED_DATE")
 	LocalDate updatedDate ;
+	
 }
