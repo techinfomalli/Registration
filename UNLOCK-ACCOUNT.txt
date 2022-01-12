@@ -1,0 +1,6 @@
+Hi {FNAME},
+
+Your account has been unlocked.
+
+Thanks
+Malli

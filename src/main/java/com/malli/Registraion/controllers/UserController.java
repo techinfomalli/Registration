@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.malli.Registraion.bindings.LoginAccount;
 import com.malli.Registraion.bindings.User;
 import com.malli.Registraion.service.UserService;
 
@@ -29,6 +30,11 @@ public class UserController {
 	@GetMapping("/getAllUser")
 	public List<User> createUser() {
 		return userService.findAllUsers();
+	}
+	
+	@GetMapping("/login")
+	public String login(@RequestBody LoginAccount login){
+		return userService.login(login);	
 	}
 
 }

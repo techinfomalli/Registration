@@ -1,8 +1,13 @@
 package com.malli.Registraion.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.malli.Registraion.bindings.LoginAccount;
+import com.malli.Registraion.bindings.UnlockAccount;
 import com.malli.Registraion.bindings.User;
 import com.malli.Registraion.models.UserEntity;
 import com.malli.Registraion.repositories.UserRepository;
@@ -50,7 +57,7 @@ public class UserService {
 	}
 
 	public String createUser(User user) {
-		logger.info("***User created started***");
+		logger.info("***User creation started***");
 		logger.info("User {}",user);
 		UserEntity entity = new UserEntity();
 		BeanUtils.copyProperties(user, entity);
@@ -79,4 +86,72 @@ public class UserService {
 		logger.info("*End generateTempPwd");
 		return tempPwd;
 	}
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+public String unlockAccount(UnlockAccount unlockAccount) {
+		
+		UserEntity userEntity =userRepo.findByUserEmail(unlockAccount.getEmail());
+		String Status;
+		
+		 if (userEntity!=null) {
+			 Status= "Account not found";
+		 }
+		 if (userEntity.getUserAccStatus()=="LOCKED") {
+			 
+			 userEntity.setUserAccStatus("ACTIVE");
+			 userRepo.save(userEntity);
+			 Status= "Account is activated";
+			 emaiUtils.sendEmail(Status,readMailBodyunlockAccount(userEntity),userEntity.getUserEmail());
+		
+		
+		
+	}else {
+		Status= "Account not locked.";
+		
+	}
+		return Status;
+	
+}
+
+public String readMailBodyunlockAccount(UserEntity userEntity) {
+	String mailBody="something";
+	StringBuffer buffer = new StringBuffer();
+	String file="UNLOCK-ACCOUNT.txt";
+	Path path =Paths.get(file);
+	System.out.println(path);
+	try(
+			Stream<String> stream=Files.lines(path)){
+		stream.forEach(line ->{
+			buffer.append(line);
+		});
+	
+		mailBody=buffer.toString();
+		mailBody=mailBody.replace("FNAME", userEntity.getUserFirstName());
+	
+	} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+
+return mailBody;
+	
+
+}
+
+//login
+////////////////////////////////////////////////////////////////////////////////////////////
+public String login(LoginAccount loginAccount) {
+	
+	logger.info("loginAccount {}",loginAccount);
+	UserEntity userEntity =userRepo.findByUserEmail(loginAccount.getUserEmail());
+	logger.info("userEntity {}",userEntity);
+	if( userEntity.getUserPwd().equals(loginAccount.getUserPwd())) {
+		return "Login Success";
+	}
+
+	return "Login Failed";
+
+}
+
 }
