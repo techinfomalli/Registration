@@ -2,36 +2,29 @@ package com.malli.Registraion.utils;
 
 import javax.mail.internet.MimeMessage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import com.malli.Registraion.service.UserService;
+import com.malli.Registraion.exception.InternalServerError;
+import com.malli.Registraion.service.EmailThread;
+
 @Service
 public class EmailUtils {
-	
+
 	@Autowired
 	private JavaMailSender mailSender;
-	
-	 Logger logger = LoggerFactory.getLogger(UserService.class);
 
-	public boolean sendEmail(String subject, String body, String to) {
-		logger.info("***sendEmail started***");
-		logger.info("subject,body,to {},{},{}",subject,body,to);
-		MimeMessage mimeMessage = mailSender.createMimeMessage();
+	public boolean sendEmail(String subject, String body, String to) throws Exception {
+
 		try {
-			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-			mimeMessageHelper.setSubject(subject);
-			mimeMessageHelper.setTo(to);
-			mimeMessageHelper.setText(body);
-			mailSender.send(mimeMessageHelper.getMimeMessage());
+			MimeMessage mimeMessage = mailSender.createMimeMessage();
+			EmailThread emailThread = new EmailThread(mailSender, subject, body, to);
+			emailThread.start();
 			return true;
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new InternalServerError(e.toString());
 		}
-		return false;
+
 	}
 }

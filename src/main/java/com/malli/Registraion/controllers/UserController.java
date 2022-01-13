@@ -20,7 +20,7 @@ public class UserController {
 	
 
 	@GetMapping("/createUser")
-	public String createUser(@RequestBody User user) {
+	public String createUser(@RequestBody User user) throws Exception {
 		return userService.createUser(user);
 	}
 	

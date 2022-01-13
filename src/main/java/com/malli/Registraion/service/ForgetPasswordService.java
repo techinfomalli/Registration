@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.malli.Registraion.bindings.Forgetpwd;
 import com.malli.Registraion.models.UserEntity;
 import com.malli.Registraion.repositories.UserRepository;
 import com.malli.Registraion.utils.EmailUtils;
@@ -22,10 +23,10 @@ public class ForgetPasswordService {
 	@Autowired
 	EmailUtils emaiUtils;
 	
-	public String forgetPassword(String userEmai) {
+	public String forgetPassword(Forgetpwd forgetpwd) throws Exception {
 		
 		String Status=null;
-		UserEntity userEntity =userRepo.findByUserEmail(userEmai);
+		UserEntity userEntity =userRepo.findByUserEmail(forgetpwd.getUserEmail());
 		if(userEntity==null) {
 			return "User not found with email id";
 		}else {
@@ -33,7 +34,7 @@ public class ForgetPasswordService {
 			 emaiUtils.sendEmail("Passsword",readMailBodyForgetPassword(userEntity),userEntity.getUserEmail());
 				
 		}
-		return null;
+		return Status;
 	}
 	
 	

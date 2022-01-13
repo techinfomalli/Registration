@@ -38,8 +38,12 @@ public class UserService {
 		logger.info("***findAllUsers started***");
 		List<User> users = new ArrayList();
 		List<UserEntity> usreEntity = userRepo.findAll();
+		User user = new User();
+		//usreEntity.stream().forEach(entity-> BeanUtils.copyProperties(entity, user) ).collect());
+		users.add(user);
+		
 		for (UserEntity entity : usreEntity) {
-			User user = new User();
+			
 			BeanUtils.copyProperties(entity, user);
 			users.add(user);
 		}
@@ -57,9 +61,19 @@ public class UserService {
 
 	}
 
-	public String createUser(User user) {
+	public String createUser(User user) throws Exception {
 		logger.info("***User creation started***");
 		logger.info("User {}", user);
+		
+		try {
+			UserEntity userEntity = new UserEntity();
+			userEntity = userRepo.findByUserEmail(user.getUserEmail());
+			if(userEntity.getUserId()!=null) {
+				return "User Already exists";
+			}
+		} catch (NullPointerException e) {
+			//throw new Exception(e.getLocalizedMessage());
+		}
 		UserEntity entity = new UserEntity();
 		BeanUtils.copyProperties(user, entity);
 		entity.setUserAccStatus("LOCKED");
@@ -159,9 +173,11 @@ public class UserService {
 		if (userEntity.getUserPwd().equals(loginAccount.getUserPwd())) {
 
 			return "Login Success";
+		}else {
+			return "Login credientials are not matched.";
 		}
 
-		return "Login Failed";
+		
 
 	}
 
