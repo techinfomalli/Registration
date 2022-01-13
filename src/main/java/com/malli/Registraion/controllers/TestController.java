@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class TestController {
 	
-	@GetMapping("/test")
-	public String test() {
-		return "Srirama";
+	@GetMapping("/test1")
+	public String testexception() throws Exception {
+		throw new Exception("you are fool");
 	}
 
 }

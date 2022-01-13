@@ -17,10 +17,7 @@ public class UserController {
 	@Autowired
 	UserService userService;
 
-	@GetMapping("/test1")
-	public String test() {
-		return "Srirama";
-	}
+	
 
 	@GetMapping("/createUser")
 	public String createUser(@RequestBody User user) {
@@ -33,8 +30,9 @@ public class UserController {
 	}
 	
 	@GetMapping("/login")
-	public String login(@RequestBody LoginAccount login){
+	public String login(@RequestBody LoginAccount login) throws Exception{
 		return userService.login(login);	
 	}
+	
 
 }
