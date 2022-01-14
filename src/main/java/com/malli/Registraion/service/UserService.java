@@ -107,7 +107,9 @@ public class UserService {
 
 		UserEntity userEntity = userRepo.findByUserEmail(unlockAccount.getEmail());
 		String Status = "No msg";
-
+		logger.info("***Started unlock user account");
+		logger.info("input unlockAccount:{}",unlockAccount);
+		logger.info("from database: userEntity:{}",userEntity);
 		try {
 			if (userEntity.getUserPwd().equals(unlockAccount.getTemppwd())) {
 				{
@@ -122,6 +124,7 @@ public class UserService {
 
 			}
 		} catch (Exception e) {
+			logger.info("Exception occered while unlockAccount:{}",e);
 			throw new InternalServerError("Internal server error.");
 		}
 		return Status;
