@@ -15,11 +15,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.malli.Registraion.AppConstants.AppConstants;
 import com.malli.Registraion.bindings.LoginAccount;
 import com.malli.Registraion.bindings.UnlockAccount;
 import com.malli.Registraion.bindings.User;
 import com.malli.Registraion.exception.InternalServerError;
 import com.malli.Registraion.models.UserEntity;
+import com.malli.Registraion.repositories.CountryRepository;
 import com.malli.Registraion.repositories.UserRepository;
 import com.malli.Registraion.utils.EmailUtils;
 
@@ -28,6 +30,9 @@ public class UserService {
 
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	CountryRepository Country;
 
 	@Autowired
 	EmailUtils emaiUtils;
@@ -40,7 +45,7 @@ public class UserService {
 		List<UserEntity> usreEntity = userRepo.findAll();
 		User user = new User();
 		//usreEntity.stream().forEach(entity-> BeanUtils.copyProperties(entity, user) ).collect());
-		users.add(user);
+	//	users.add(user);
 		
 		for (UserEntity entity : usreEntity) {
 			
@@ -52,13 +57,30 @@ public class UserService {
 
 	}
 
-	public String deleteUser(Integer userId) {
+	public String deleteUser(String userId) {
 		logger.info("***User deletion started***");
 		logger.info("userId {}", userId);
-		userRepo.deleteById(userId);
+		userRepo.deleteById(Integer.parseInt(userId));
 		logger.info("***User deletion compleated***");
-		return "Deleted successfully.";
+		return AppConstants.DELETED;
 
+	}
+	
+	public String delete(String id) throws Exception {
+		UserEntity userEntity = null;
+		logger.info("delete Account {}", id);
+		try {
+			userEntity = userRepo.findByUserEmail(id);
+			userRepo.deleteById(userEntity.getUserId());
+
+		} catch (Exception e) {
+			throw new Exception(e.getLocalizedMessage());
+		}
+		logger.info("userEntity {}", userEntity);
+		
+		
+		
+		return AppConstants.DELETED;
 	}
 
 	public String createUser(User user) throws Exception {
@@ -152,6 +174,24 @@ public class UserService {
 		return mailBody;
 
 	}
+	
+	public String emailCheckTest(String email) throws Throwable {
+		
+		UserEntity userEntity = new UserEntity();
+		System.out.println(email);
+		userEntity = userRepo.findByUserEmail(email);
+		try {
+			if(userEntity.getUserId()!=null) {
+				return "Not available";
+			}
+		} catch (NullPointerException e) {
+			return "Available";
+		}
+		return "Available1";
+		
+	}
+	
+	
 
 //login
 ////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,5 +223,11 @@ public class UserService {
 		
 
 	}
-
+//Country	
+///////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	public List<com.malli.Registraion.models.Country> getConties() {
+		return Country.findAll();
+	}
+	
 }

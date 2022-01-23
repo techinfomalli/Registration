@@ -13,6 +13,14 @@ import lombok.Data;
 @Table(name="COUNTRY_MASTER")
 public class Country {
 	
+	
+
+	public Country(Integer countryId, String countryName) {
+		super();
+		this.countryId = countryId;
+		this.countryName = countryName;
+	}
+
 	@Id
 	@GeneratedValue
 	@Column(name="COUNTRY_ID")
