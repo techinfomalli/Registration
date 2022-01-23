@@ -81,8 +81,16 @@
             <groupId>org.jacoco</groupId>
             <artifactId>jacoco-maven-plugin</artifactId>
             <version>0.8.5</version>
+            <configuration>
+            <excludes>
+             <exclude> com.malli.Registraion.bindings/*</exclude>
+            <exclude> com.malli.Registraion.AppConstants/*</exclude>
+            <exclude> com.malli.Registraion.exception/*</exclude> 
+          <!--   <exclude> com.malli.Registraion.*.*</exclude>-->
+            </excludes>
+            </configuration>
             <executions>
-                <execution>
+              <execution>
                     <id>jacoco-initialize</id>
                     <goals>
                         <goal>prepare-agent</goal>

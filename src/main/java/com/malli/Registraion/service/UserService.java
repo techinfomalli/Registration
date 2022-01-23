@@ -105,7 +105,7 @@ public class UserService {
 			// emaiUtils.sendEmail("Subject","body",userEntity.getUserEmail());
 		}
 		logger.info("***End ofcreateUser ***");
-		return "User created successfully.";
+		return AppConstants.UESRCREATED;
 
 	}
 

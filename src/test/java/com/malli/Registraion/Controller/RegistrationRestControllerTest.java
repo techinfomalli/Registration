@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.malli.Registraion.AppConstants.AppConstants;
+import com.malli.Registraion.bindings.User;
 import com.malli.Registraion.controllers.UserController;
 import com.malli.Registraion.models.Country;
 import com.malli.Registraion.service.UserService;
@@ -70,9 +71,9 @@ public class RegistrationRestControllerTest {
 		  MockMvcRequestBuilders.get("/countryes");
 		  MvcResult result = mockMvc.perform(builder).andReturn();
 		  MockHttpServletResponse response = result.getResponse();
-		  assertEquals(result.getResponse()	.getStatus(),200);
+		  assertEquals(200,result.getResponse()	.getStatus());
 		 // response.getContentAsByteArray()
-		  System.out.println(result.toString());
+		//  System.out.println(result.getClass().);
 		 
 
 	}
@@ -83,4 +84,20 @@ public class RegistrationRestControllerTest {
 		assertEquals(AppConstants.UNIQUE, AppConstants.UNIQUE);
 
 	}
+	
+	
+	@Test
+	public void testCreateUser() throws Throwable {
+		User user = new User("ram","techinfomalli@gmail.com");
+		ObjectMapper userMapper = new ObjectMapper();
+		String writeValueAsString = userMapper.writeValueAsString(user);
+		when(userService.createUser(user)).thenReturn(AppConstants.UESRCREATED);
+		MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.get("/createUser").contentType("application/json").content(writeValueAsString);
+		MvcResult result = mockMvc.perform(builder).andReturn();
+		MockHttpServletResponse response = result.getResponse();
+		assertEquals(AppConstants.UESRCREATED, response.getContentAsString());
+		assertEquals(200, response.getStatus());
+
+	}
+
 }
