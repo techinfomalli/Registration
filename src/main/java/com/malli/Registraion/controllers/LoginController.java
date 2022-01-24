@@ -13,6 +13,7 @@ public class LoginController {
 	@Autowired
 	com.malli.Registraion.service.LoginService loginService;
 	
+	//amar
 	
 	
 
