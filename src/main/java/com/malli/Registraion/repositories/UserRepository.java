@@ -7,6 +7,7 @@ import com.malli.Registraion.models.UserEntity;
 public interface UserRepository extends JpaRepository<UserEntity, Integer> {
 
 	public UserEntity findByUserEmail(String userEmail);
+	//123
 
 	
 }
